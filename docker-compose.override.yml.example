@@ -1,0 +1,105 @@
+# docker-compose 覆盖配置示例
+# 使用方法: cp docker-compose.override.yml.example docker-compose.override.yml
+# 然后编辑该文件，docker-compose 启动时会自动加载并覆盖默认配置
+
+# 注意: 此文件仅供示例参考，实际使用建议编辑 .env 文件
+
+# ===== 示例 1: 高性能测速模式 =====
+# version: '3.8'
+# services:
+#   cloudflare-speedtest:
+#     environment:
+#       THREADS: "500"        # 更多线程加快测速
+#       TIMES: "5"            # 增加测试次数提高准确度
+#       DOWNLOAD_NUM: "20"    # 更多 IP 参与下载测速
+#       TEST_PORT: "443"
+#       DEBUG: "false"
+
+# ===== 示例 2: 严格过滤模式 =====
+# version: '3.8'
+# services:
+#   cloudflare-speedtest:
+#     environment:
+#       THREADS: "100"
+#       MAX_DELAY: "100"        # 严格的延迟上限
+#       MIN_SPEED: "50"         # 严格的速度下限
+#       MAX_LOSS_RATE: "0"      # 无丢包容限
+#       RESULT_NUM: "5"         # 只显示最好的 5 个
+#       DEBUG: "false"
+
+# ===== 示例 3: 快速检测模式 (无下载测速) =====
+# version: '3.8'
+# services:
+#   cloudflare-speedtest:
+#     environment:
+#       DISABLE_DOWNLOAD: "true"  # 禁用下载测速，快速完成
+#       THREADS: "100"
+#       RESULT_NUM: "5"
+#       DEBUG: "false"
+
+# ===== 示例 4: 自动上传到 Gist 模式 =====
+# version: '3.8'
+# services:
+#   cloudflare-speedtest:
+#     environment:
+#       THREADS: "200"
+#       DOWNLOAD_NUM: "10"
+#       RESULT_NUM: "10"
+#       # 需要替换为真实的 GitHub Token (需要 gist 权限)
+#       GIST_TOKEN: "ghp_xxxxxxxxxxxxxxxxxxxx"
+#       # 可选: 指定现有的 Gist ID 来更新而不是创建新的
+#       # GIST_ID: "xxxxxxxxxxxxxxxx"
+#       DEBUG: "false"
+
+# ===== 示例 5: 调试模式 (显示完整命令) =====
+# version: '3.8'
+# services:
+#   cloudflare-speedtest:
+#     environment:
+#       THREADS: "200"
+#       DOWNLOAD_NUM: "10"
+#       DEBUG: "true"           # 启用调试模式查看实际执行命令
+
+# ===== 示例 6: 使用 Docker Hub 镜像 + 自定义挂载 =====
+# version: '3.8'
+# services:
+#   cloudflare-speedtest:
+#     # 使用预构建的 Docker Hub 镜像 (注释掉 build)
+#     image: allurelove98/cloudflare-speedtest:latest
+#     
+#     # 删除本地编译
+#     # build:
+#     #   context: .
+#     #   dockerfile: Dockerfile
+#     
+#     environment:
+#       THREADS: "200"
+#       DOWNLOAD_NUM: "10"
+#     
+#     volumes:
+#       # 输出目录
+#       - ./results:/app/results
+#       # 自定义 IP 列表
+#       - ./custom_ip.txt:/app/ip.txt
+#       # 自定义 IP 数据目录
+#       - ./ip_data:/app/ip_data
+
+# ===== 示例 7: Host 模式 (仅 Linux/macOS, 性能最优) =====
+# version: '3.8'
+# services:
+#   cloudflare-speedtest:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     
+#     # 使用主机网络模式 (性能最好，但无网络隔离)
+#     # 注意: Windows 不支持 Host 模式，仅 Linux 和 macOS 支持
+#     network_mode: host
+#     
+#     environment:
+#       THREADS: "200"
+#       DOWNLOAD_NUM: "10"
+#     
+#     volumes:
+#       # Host 模式下仍可使用卷挂载
+#       - ./results:/app/results

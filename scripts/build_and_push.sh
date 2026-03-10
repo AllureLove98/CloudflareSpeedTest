@@ -6,7 +6,7 @@
 set -e
 
 # 获取参数
-USERNAME=${1:-myusername}
+USERNAME=${1:-allurelove98}
 VERSION=${2:-latest}
 IMAGE_NAME="cloudflare-speedtest"
 DOCKERFILE="Dockerfile"

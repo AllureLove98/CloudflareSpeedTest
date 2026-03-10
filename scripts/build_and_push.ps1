@@ -2,7 +2,7 @@
 # 用法: .\build_and_push.ps1 [username] [version]
 
 param(
-    [string]$Username = "myusername",
+    [string]$Username = "allurelove98",
     [string]$Version = "latest"
 )
 

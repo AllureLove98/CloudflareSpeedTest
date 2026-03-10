@@ -9,7 +9,7 @@ set USERNAME=%1
 set VERSION=%2
 
 if "%USERNAME%"=="" (
-    set USERNAME=myusername
+    set USERNAME=allurelove98
 )
 if "%VERSION%"=="" (
     set VERSION=latest

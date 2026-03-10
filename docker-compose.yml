@@ -2,40 +2,75 @@ version: '3.8'
 
 services:
   cloudflare-speedtest:
+    # 镜像构建或使用
     build:
       context: .
       dockerfile: Dockerfile
+    
+    # 使用预构建镜像 (可选)
+    # image: allurelove98/cloudflare-speedtest:latest
+    
     image: cloudflare-speedtest:latest
     container_name: cfst-speedtest
     
-    # 环境变量配置
+    # ===== 环境变量配置 =====
+    # 方式1: 从 .env 文件加载(推荐)
     env_file:
       - .env
     
-    # 挂载卷
-    volumes:
-      # 输出结果目录
-      - ./results:/app/results
-      # IP数据文件
-      - ./ip_data:/app/ip_data
+    # 方式2: 直接设置环境变量 (会覆盖 .env 文件)
+    # 取消注释下面的行来启用:
+    # environment:
+    #   THREADS: "300"
+    #   DOWNLOAD_NUM: "20"
+    #   MAX_DELAY: "100"
+    #   RESULT_NUM: "10"
+    #   GIST_TOKEN: ""
     
-    # 网络配置
+    # ===== 数据卷挂载 =====
+    volumes:
+      # 输出结果目录 (结果文件保存到本地 results/ 目录)
+      - ./results:/app/results
+      
+      # IP数据文件目录 (可选，用于自定义 IP 列表)
+      - ./ip_data:/app/ip_data
+      
+      # 自定义 IP 文件 (可选)
+      # - ./ip.txt:/app/ip.txt
+    
+    # ===== 网络配置 =====
+    # Bridge 模式（默认）- 容器有独立网络栈，隔离性好
     networks:
       - cfst-network
     
-    # 重启策略
+    # Host 模式（可选）- 容器使用主机网络，性能更好但隔离性差
+    # 取消注释下面行来启用 Host 模式，并注释掉上面的 networks 配置
+    # network_mode: host
+    # 注意: 使用 Host 模式时，以下配置无效:
+    #       - networks
+    #       - ports (如果有的话)
+    #       - 自定义网络隔离
+    
+    # ===== 容器重启策略 =====
+    # unless-stopped: 除非容器被手动停止，否则总是重启
+    # 用于生产环境定时测速任务
     restart: unless-stopped
     
-    # 资源限制
+    # ===== 资源限制 =====
     deploy:
       resources:
         limits:
+          # CPU 上限 (2核)
           cpus: '2'
+          # 内存上限 (512MB)
           memory: 512M
         reservations:
+          # CPU 预留 (1核)
           cpus: '1'
+          # 内存预留 (256MB)
           memory: 256M
 
+# ===== 网络配置 =====
 networks:
   cfst-network:
     driver: bridge

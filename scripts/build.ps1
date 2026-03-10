@@ -45,7 +45,7 @@ Write-Host "✅ 镜像构建完成!" -ForegroundColor Green
 Write-Host ""
 Write-Host "下一步:" -ForegroundColor Cyan
 Write-Host "1. 登录 Docker Hub: docker login" -ForegroundColor Gray
-Write-Host "2. 标记镜像: docker tag ${ImageName}:${Version} USERNAME/${ImageName}:${Version}" -ForegroundColor Gray
-Write-Host "3. 推送镜像: docker push USERNAME/${ImageName}:${Version}" -ForegroundColor Gray
+Write-Host "2. 标记镜像: docker tag ${ImageName}:${Version} allurelove98/${ImageName}:${Version}" -ForegroundColor Gray
+Write-Host "3. 推送镜像: docker push allurelove98/${ImageName}:${Version}" -ForegroundColor Gray
 Write-Host ""
-Write-Host "或使用脚本: .\build_and_push.ps1 USERNAME [version]" -ForegroundColor Cyan
+Write-Host "或使用脚本: .\build_and_push.ps1 allurelove98 [version]" -ForegroundColor Cyan

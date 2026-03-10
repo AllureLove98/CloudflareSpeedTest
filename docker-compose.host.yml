@@ -1,0 +1,30 @@
+# Host 网络模式配置
+# 使用方法: docker-compose -f docker-compose.yml -f docker-compose.host.yml up
+# 或: docker-compose -f docker-compose.host.override.yml up
+#
+# Host 模式特点：
+# ✓ 容器共享主机网络栈，性能最好
+# ✓ 无网络隔离，容器可直接访问主机网络
+# ✓ 适合需要高性能网络的应用（如性能测试工具）
+# 
+# ⚠ Host 模式限制（需要注意）：
+# - Linux 和 macOS 支持，Windows 不支持 Host 模式
+# - 无法使用自定义网络隔离
+# - 容器端口直接映射到主机
+
+version: '3.8'
+
+services:
+  cloudflare-speedtest:
+    # 使用 Host 网络模式（仅在 Linux/macOS 可用）
+    network_mode: host
+    
+    # Host 模式下无需挂载自定义网络卷（networks 配置被忽略）
+    # 其他配置保持不变
+    
+    # 如果需要使用 Docker Hub 镜像，取消注释下面：
+    # image: allurelove98/cloudflare-speedtest:latest
+    # pull_policy: always
+
+# Host 模式下，networks 部分会被忽略，可以删除
+# 但保留兼容性，这里不删除原有的 networks 定义
