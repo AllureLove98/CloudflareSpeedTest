@@ -63,8 +63,8 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-         push: true
-         tags: |
+          push: true
+          tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}
             ${{ steps.version.outputs.IS_RELEASE == 'true' && format('{0}/{1}:latest', env.REGISTRY, env.IMAGE_NAME) || '' }}
           labels: |
@@ -72,6 +72,3 @@ jobs:
             version=${{ steps.version.outputs.VERSION }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
-
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
