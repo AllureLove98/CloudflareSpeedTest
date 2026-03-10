@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  cloudflare-speedtest:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cloudflare-speedtest:latest
+    container_name: cfst-speedtest
+    
+    # 环境变量配置
+    env_file:
+      - .env
+    
+    # 挂载卷
+    volumes:
+      # 输出结果目录
+      - ./results:/app/results
+      # IP数据文件
+      - ./ip_data:/app/ip_data
+    
+    # 网络配置
+    networks:
+      - cfst-network
+    
+    # 重启策略
+    restart: unless-stopped
+    
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 512M
+        reservations:
+          cpus: '1'
+          memory: 256M
+
+networks:
+  cfst-network:
+    driver: bridge
