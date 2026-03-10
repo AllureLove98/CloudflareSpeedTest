@@ -3,6 +3,10 @@ name: Build and Push on Release
 on:
   release:
     types: [published, created]
+  push:
+    branches:
+      - main
+      - master
   workflow_dispatch:
     inputs:
       version:
@@ -39,8 +43,17 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "release" ]; then
             VERSION=${GITHUB_REF#refs/tags/}
+            echo "IS_RELEASE=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            VERSION="latest"
+            echo "IS_RELEASE=false" >> $GITHUB_OUTPUT
           else
             VERSION=${{ github.event.inputs.version }}
+            if [ "$VERSION" = "latest" ]; then
+              echo "IS_RELEASE=false" >> $GITHUB_OUTPUT
+            else
+              echo "IS_RELEASE=true" >> $GITHUB_OUTPUT
+            fi
           fi
           echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
 
@@ -50,10 +63,10 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          push: true
-          tags: |
+         push: true
+         tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ steps.version.outputs.IS_RELEASE == 'true' && format('{0}/{1}:latest', env.REGISTRY, env.IMAGE_NAME) || '' }}
           labels: |
             maintainer=${{ github.actor }}
             version=${{ steps.version.outputs.VERSION }}
